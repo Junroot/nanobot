@@ -8,10 +8,12 @@ var T = new Twit(config);
 var ritt = Date.now();
 //마지막 정규 트윗 내용
 var riti = 0;
-
+//스트림 시작
 var stream = T.stream('user');
 
 stream.on('tweet', tweetEvent);
+
+tweet("나노봇v2를 실행합니다!");
 
 function tweetEvent(eventMsg)
 {
@@ -21,10 +23,41 @@ function tweetEvent(eventMsg)
 	var newtweet;
 
 	console.log(eventMsg);
-
+	//멘션이 올 경우
 	if (text.search("@_nano_bot")!=-1)
 	{
-		if (text.search("점심")!=-1)
+		//랜덤 선택 기능
+		if (text.search("선택")!=-1)
+		{
+			var select = text.split(' ');
+			if (select.length > 2)
+			{
+				var removelist = ['@_nano_bot','해줘','줘','중','중에','선택','선택해','선택해줘'];
+				if (select[1].search('나노야')!=-1)	select.splice(1,1);
+				select.splice(select.length-1,1);
+				for (var i = 0;i < select.length;++i)
+				{
+					for (var j = 0;j < removelist.length;++j)
+					{
+						//removelist 에 있는 단어가 있으면 삭제
+						if (select[i]==removelist[j])
+						{
+							console.log("지운다");
+							select.splice(i,1);
+							--i;
+						}	
+					}
+				}
+				var i = Math.floor(Math.random() * select.length);
+				newtweet = '@' + from + ' ' + select[i] + ' 어떠세요?';
+			}
+			else
+			{
+				return;
+			}
+		}
+		//점심 선택 기능
+		else if (text.search("점심")!=-1)
 		{
 			var lunch = [
 			'편의점 도시락',
@@ -37,6 +70,7 @@ function tweetEvent(eventMsg)
 			var i = Math.floor(Math.random() * lunch.length);
 			newtweet = '@' + from + ' ' +lunch[i] + ' 어떠세요?';
 		}
+		//저녁 선택 기능
 		else if (text.search("저녁")!=-1)
 		{
 			var dinner = [
@@ -46,9 +80,14 @@ function tweetEvent(eventMsg)
 			'카모메',
 			'돈까스 공장',
 			'행운 돈까스',
-			'일락'];
+			'일락',
+			'떡볶이'];
 			var i = Math.floor(Math.random() * dinner.length);
 			newtweet = '@' + from + ' ' +dinner[i] + ' 어떠세요?';
+		}
+		else if (text.search("♡")!=-1)
+		{
+			newtweet = '@' + from + ' ><♡';
 		}
 		else
 		{
@@ -59,7 +98,7 @@ function tweetEvent(eventMsg)
 		mention(newtweet,status_str);
 	}
 }
-
+//정규 트윗
 setInterval(act, 4000);
 
 function act() {
@@ -70,17 +109,22 @@ function act() {
 function iterativetweet()
 {
 	var itv = [
-	'테스트 입니다!',
 	'안녕하세요! 루트님의 나노입니다!',
+	'나노에게는 여러가지 기능이 있어요! 어떤게 있는지는 비밀이랍니다!',
+	'오늘 장은 뭘 살까?',
+	'어어라 태엽이 빠졌다;;',
+	'엄지 발가락에 어째서 1GB USB가... 8ㅅ8',
+	'이상한 기능 달지 말아주세요!',
 	'혹시 필요하신거 있으세요?',
 	'좀 더 평범한 게 좋다구요!',
-	'이 태엽은 절대 제가 로봇이라 있는게 아니에요!!'];
+	'이 태엽은 절대 제가 로봇이라 있는게 아니에요!!',
+	'나노는 말을 많이 걸어 줄수록 똑똑해진답니다!'];
 	tweet(itv[riti]);
 	riti = riti+1;
 	riti = riti%itv.length;
 	ritt = Date.now();
 }
-
+//트윗 함수
 function tweet(par)
 {
 	var t = {
@@ -95,7 +139,7 @@ function tweet(par)
 		}
 	};
 };
-
+//멘션 함수
 function mention(par, status_str)
 {
 	var t = {
