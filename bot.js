@@ -151,8 +151,9 @@ function tweetEvent(eventMsg)
 		{
 			var d = new Date();
 			var h = d.getHours();
-			var uth = d.getUTCHours()-12;
-			var hour = h+uth-9;
+			var uth = d.getUTCHours();
+			var hour = uth+9;
+			hour %= 24;
 			writeFile("newdb.txt",from+" : "+text);
 			++newdbnum;
 			tweet("@__root____ "+hour+"시 "+d.getMinutes()+"분 "+d.getSeconds()+"초 "+"현재 나노가 이해 못한 멘션이 "+newdbnum+"개 있어요!");
