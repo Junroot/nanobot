@@ -24,10 +24,15 @@ function tweetEvent(eventMsg)
 
 	console.log(eventMsg);
 	//멘션이 올 경우
-	if (text.substr(0,1) != "RT" && text.search("@_nano_bot")!=-1)
+	if (text.substr(0,2) != "RT" && text.search("@_nano_bot")!=-1)
 	{
+		if (text.search("안녕")!=-1)
+		{
+			var name = eventMsg.user.name.split('@');
+			newtweet = '@' + from + ' ' + name[0] + '님 안녕하세요!';
+		}
 		//랜덤 선택 기능
-		if (text.search("선택")!=-1)
+		else if (text.search("선택")!=-1)
 		{
 			var select = text.split(' ');
 			if (select.length > 2)
@@ -89,8 +94,13 @@ function tweetEvent(eventMsg)
 		{
 			newtweet = '@' + from + ' ><♡';
 		}
+		else if (text.search("나노야")!=-1)
+		{
+			newtweet = '@' + from + ' 부르셨어요?';
+		}
 		else
 		{
+			writeFile("newdb.txt",from+" : "+text);
 			return;
 		}
 		var status_str = eventMsg.id_str;
@@ -154,4 +164,20 @@ function mention(par, status_str)
 			console.log("tweet error");
 		}
 	};
+}
+
+function writeFile(name,msg)
+{
+	var fs = require('fs');
+	fs.open('./'+name, 'a+', function(err, fd) {
+		if(err) throw err;
+		var buf = new Buffer(msg+'\n');
+		fs.write(fd, buf, 0, buf.length, null, function(err, written, buffer) {
+			if(err) throw err;
+			console.log(err, written, buffer);
+			fs.close(fd, function() {
+		    console.log("The file was saved!"); 
+			});
+		});
+	});
 }
