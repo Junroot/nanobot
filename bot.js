@@ -24,7 +24,7 @@ function tweetEvent(eventMsg)
 
 	console.log(eventMsg);
 	//멘션이 올 경우
-	if (text.search("@_nano_bot")!=-1)
+	if (text.substr(0,1) != "RT" && text.search("@_nano_bot")!=-1)
 	{
 		//랜덤 선택 기능
 		if (text.search("선택")!=-1)
