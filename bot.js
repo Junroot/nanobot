@@ -152,7 +152,7 @@ function tweetEvent(eventMsg)
 			var d = new Date();
 			writeFile("newdb.txt",from+" : "+text);
 			++newdbnum;
-			tweet("@__root____ "+d.getHours()+"시 "+d.getMinutes()+"분 "+d.getSeconds()+"초 "+"현재 나노가 이해 못한 멘션이 "+newdbnum+"개 있어요!");
+			tweet("@__root____ "+d.getHours()-d.getUTCHours()+9+"시 "+d.getMinutes()+"분 "+d.getSeconds()+"초 "+"현재 나노가 이해 못한 멘션이 "+newdbnum+"개 있어요!");
 			return;
 		}
 		var status_str = eventMsg.id_str;
