@@ -10,10 +10,17 @@ var ritt = Date.now();
 var riti = 0;
 //스트림 시작
 var stream = T.stream('user');
+var newdbnum = 0;
+//새로운 db 개수 확인
+var fs = require('fs');
+var filestring = fs.readFileSync('./newdb.txt', "utf8");
+var varRegexp = new RegExp("\n","ig");
+var chkTrue = filestring.match(varRegexp)
+if (chkTrue != null) newdbnum = chkTrue.length;
 
 stream.on('tweet', tweetEvent);
 
-tweet("나노봇v2를 실행합니다!");
+tweet("나노봇v3를 실행합니다!");
 
 function tweetEvent(eventMsg)
 {
@@ -47,7 +54,6 @@ function tweetEvent(eventMsg)
 						//removelist 에 있는 단어가 있으면 삭제
 						if (select[i]==removelist[j])
 						{
-							console.log("지운다");
 							select.splice(i,1);
 							--i;
 						}	
@@ -60,6 +66,10 @@ function tweetEvent(eventMsg)
 			{
 				return;
 			}
+		}
+		else if (text.search("잘했어")!=-1)
+		{
+			newtweet = '@' + from + ' 고맙습니다><';
 		}
 		//점심 선택 기능
 		else if (text.search("점심")!=-1)
@@ -94,13 +104,55 @@ function tweetEvent(eventMsg)
 		{
 			newtweet = '@' + from + ' ><♡';
 		}
-		else if (text.search("나노야")!=-1)
+		else if (text.search("db 보내줘")!=-1)
 		{
-			newtweet = '@' + from + ' 부르셨어요?';
+			if (from == "__root____")
+			{
+				newtweet = '@' + from + ' 전송완료했습니다!';
+				var async = require('async');
+				async.series({
+					one: function(callback) {
+						setTimeout(function(){
+							sendmail('newdb.txt');
+							console.log('test1');
+							callback(null,6000);
+						},6000);
+					},
+					two: function(callback) {
+						setTimeout(function(){
+							console.log('test2');
+							newdbnum = 0;
+							var fs = require('fs');
+							fs.open('./newdb.txt', 'w+', function(err, fd) {
+								if(err) throw err;
+								var buf = new Buffer(' ');
+								fs.write(fd, buf, 0, 0, null, function(err, written, buffer) {
+									if(err) throw err;
+									console.log(err, written, buffer);
+									fs.close(fd, function() {
+							   			console.log("newdb was written!"); 
+									});
+								});
+							});
+						callback(null,6000);
+						},6000);
+						
+					}
+				},
+				function(err,results) {
+				});
+			}
+			else
+			{
+				newtweet = '@' + from + ' 이건 루트님만 받을 수 있어요 ><~';
+			}
 		}
 		else
 		{
+			var d = new Date();
 			writeFile("newdb.txt",from+" : "+text);
+			++newdbnum;
+			tweet("@__root____ "+d.getHours()+"시 "+d.getMinutes()+"분 "+d.getSeconds()+"초 "+"현재 나노가 이해 못한 멘션이 "+newdbnum+"개 있어요!");
 			return;
 		}
 		var status_str = eventMsg.id_str;
@@ -176,8 +228,38 @@ function writeFile(name,msg)
 			if(err) throw err;
 			console.log(err, written, buffer);
 			fs.close(fd, function() {
-		    console.log("The file was saved!"); 
+		    console.log(name+" was written!"); 
 			});
 		});
+	});
+}
+
+function sendmail(Fname)
+{
+	var nodemailer = require('nodemailer');
+
+	var smtpTransport = nodemailer.createTransport('smtps://junroox%40gmail.com:k132i909@smtp.gmail.com');
+
+	var mailOptions = {
+		from: '나노 <junroox@gmail.com>',
+		to: 'junroot0909@gmail.com',
+		subject: '나노가 이해하지 못한 멘션들 입니다!',
+		text: '파일 첨부합니다!',
+		html: '<b>파일 첨부합니다!</b>',
+		attachments: [
+			{
+				path: './'+Fname
+			}
+		]
+	};
+
+	smtpTransport.sendMail(mailOptions, function(error, response){
+
+	if (error){
+		//	console.log(error);
+		} else {
+		//	console.log("Message sent : " + response.message);
+		}
+		smtpTransport.close();
 	});
 }

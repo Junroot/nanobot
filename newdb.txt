@@ -1,1 +1,2 @@
-__root____ : @_nano_bot 파피푸
+__root____ : @_nano_bot 데헷
+__root____ : @_nano_bot 오줌

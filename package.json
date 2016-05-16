@@ -4,7 +4,9 @@
   "description": "",
   "main": "bot.js",
   "dependencies": {
-    "twit": "^2.2.3"
+    "twit": "~2.2.3",
+    "nodemailer" : "~2.4.1",
+    "async" : "~2.0.0-rc4"
   },
   "devDependencies": {},
   "scripts": {
