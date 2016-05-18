@@ -6,7 +6,10 @@
   "dependencies": {
     "twit": "~2.2.3",
     "nodemailer" : "~2.4.1",
-    "async" : "~2.0.0-rc4"
+    "async" : "~2.0.0-rc4",
+    "cheerio" : "~0.20.0",
+    "request" : "~2.72.0",
+    "iconv" : "~2.2.0"
   },
   "devDependencies": {},
   "scripts": {

@@ -4,13 +4,17 @@ var Twit = require('twit');
 
 var config = require('./config');
 var T = new Twit(config);
+
 //마지막 정규 트윗 시간
 var ritt = Date.now();
+
 //마지막 정규 트윗 내용
 var riti = 0;
+
 //스트림 시작
 var stream = T.stream('user');
 var newdbnum = 0;
+
 //새로운 db 개수 확인
 var fs = require('fs');
 var filestring = fs.readFileSync('./newdb.txt', "utf8");
@@ -20,7 +24,7 @@ if (chkTrue != null) newdbnum = chkTrue.length;
 
 stream.on('tweet', tweetEvent);
 
-tweet("나노봇v3를 실행합니다!");
+tweet("나노봇v4를 실행합니다!");
 
 function tweetEvent(eventMsg)
 {
@@ -37,6 +41,44 @@ function tweetEvent(eventMsg)
 		{
 			var name = eventMsg.user.name.split('@');
 			newtweet = '@' + from + ' ' + name[0] + '님 안녕하세요!';
+		}
+		else if (text.search("뭐해")!=-1)
+		{
+			var name = eventMsg.user.name.split('@');
+			newtweet = '@' + from + ' ' + name[0] + '님을 지켜보고 있어요!';	
+		}
+		else if (text.search("날씨")!=-1)
+		{
+			//날씨 내용 파싱
+			var cheerio = require('cheerio');
+			var request = require('request');
+			var url = 'http://www.kma.go.kr/weather/observation/currentweather.jsp';
+			var Iconv1 = require('iconv').Iconv;
+			var iconv = new Iconv1('euc-kr','utf-8')
+			request.get({
+				url: url,
+				encoding: null
+			}, function(err, res,body) {
+				var buf = iconv.convert(body);
+				var string = buf.toString('utf-8');
+				var $ = cheerio.load(string);
+				var length = $('.table_develop3').children('tbody').children('tr').children('td').length
+				for (var i = 0 ;i<length;i=i+13)
+				{
+					var region = $('.table_develop3').children('tbody').children('tr').children('td').eq(i).text();
+					//console.log(region);
+					if (text.search(region)!=-1)
+					{
+						var temp = $('.table_develop3').children('tbody').children('tr').children('td').eq(i+5).text();
+						var hum = $('.table_develop3').children('tbody').children('tr').children('td').eq(i+9).text();
+						var ang = $('.table_develop3').children('tbody').children('tr').children('td').eq(i+7).text();
+						newtweet = '@' + from + ' 현재 '+region+' 날씨는 기온 '+temp+'℃,'+'습도 '+hum+'%로 불쾌지수가 '+ang+'입니다!';
+						var status_str = eventMsg.id_str;
+						mention(newtweet,status_str);
+						return;
+					}
+				}
+			});
 		}
 		//랜덤 선택 기능
 		else if (text.search("선택")!=-1)
@@ -67,6 +109,10 @@ function tweetEvent(eventMsg)
 				return;
 			}
 		}
+		else if (text.search("고마워")!=-1)
+		{
+			newtweet = '@' + from + ' 별말씀을요><';
+		} 
 		else if (text.search("잘했어")!=-1)
 		{
 			newtweet = '@' + from + ' 고맙습니다><';
@@ -156,7 +202,7 @@ function tweetEvent(eventMsg)
 			hour %= 24;
 			writeFile("newdb.txt",from+" : "+text);
 			++newdbnum;
-			tweet("@__root____ "+hour+"시 "+d.getMinutes()+"분 "+d.getSeconds()+"초 "+"현재 나노가 이해 못한 멘션이 "+newdbnum+"개 있어요!");
+			tweet(""+hour+"시 "+d.getMinutes()+"분 "+d.getSeconds()+"초 "+"현재 나노가 이해 못한 멘션이 "+newdbnum+"개 있어요!");
 			return;
 		}
 		var status_str = eventMsg.id_str;
