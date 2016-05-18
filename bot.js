@@ -78,6 +78,10 @@ function tweetEvent(eventMsg)
 						return;
 					}
 				}
+				newtweet = '@' + from + ' 지역을 모르겠어요 ㅠㅠ';
+				var status_str = eventMsg.id_str;
+				mention(newtweet,status_str);
+				return;
 			});
 		}
 		//랜덤 선택 기능
