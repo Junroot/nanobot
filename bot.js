@@ -73,8 +73,7 @@ function tweetEvent(eventMsg)
 						var temp = $('.table_develop3').children('tbody').children('tr').children('td').eq(i+5).text();
 						var hum = $('.table_develop3').children('tbody').children('tr').children('td').eq(i+9).text();
 						var ang = $('.table_develop3').children('tbody').children('tr').children('td').eq(i+7).text();
-						if (wea!="")	wea = wea + ",";
-						newtweet = '@' + from + ' 현재 '+region+' 날씨는 '+wea+'기온 '+temp+'℃,'+'습도 '+hum+'%로 불쾌지수가 '+ang+'입니다!';
+						newtweet = '@' + from + ' 현재 '+region+' 날씨는 기온 '+temp+'℃,'+'습도 '+hum+'%, 불쾌지수가 '+ang+' '+wea+'입니다!';
 						var status_str = eventMsg.id_str;
 						mention(newtweet,status_str);
 						return;
